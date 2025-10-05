@@ -1,7 +1,7 @@
 // Main.js - Application entry point
 console.log('[MAIN] Loading main.js...');
 
-let scene, camera, renderer;
+let scene, camera, renderer, controls;
 let physicsEngine, gameObjects, multiPlayerScoring, gameController, uiManager;
 let isMouseDown = false;
 let throwPower = 0;
@@ -10,6 +10,7 @@ let aimDirection = { x: 0, z: -1 };
 let clock = null;
 let lastTime = 0;
 let previewObjects = []; // Track preview objects for cleanup
+let cameraControlsEnabled = false;
 
 // Initialize the application
 function init() {
@@ -179,9 +180,29 @@ function setupScene() {
 
     // Add enhanced lighting
     addSceneLighting();
+    
+    // Setup OrbitControls for 3D camera movement
+    setupOrbitControls();
 
     // Handle window resize
     window.addEventListener('resize', onWindowResize, false);
+}
+
+function setupOrbitControls() {
+    if (typeof THREE.OrbitControls !== 'undefined') {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 5;
+        controls.maxDistance = 50;
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.target.set(0, 0, 0);
+        controls.enabled = false; // Disabled by default, toggle with 'C' key
+        console.log('[MAIN] OrbitControls initialized - Press C to toggle camera mode');
+    } else {
+        console.warn('[MAIN] OrbitControls not available');
+    }
 }
 
 function addSceneLighting() {
@@ -242,6 +263,9 @@ function setupControls() {
 }
 
 function onMouseMove(event) {
+    // Don't update game controls if camera mode is active
+    if (cameraControlsEnabled) return;
+    
     const canvas = document.getElementById('bowling-canvas');
     const rect = canvas.getBoundingClientRect();
     
@@ -268,6 +292,9 @@ function onMouseMove(event) {
 }
 
 function onMouseDown(event) {
+    // Don't handle game controls if camera mode is active
+    if (cameraControlsEnabled) return;
+    
     // Check if game controller exists and is ready
     if (!gameController || !gameController.state) {
         console.log('[MAIN] Game not started yet');
@@ -290,6 +317,12 @@ function onMouseUp(event) {
     if (!isMouseDown) return;
     
     isMouseDown = false;
+    
+    // Don't handle game controls if camera mode is active
+    if (cameraControlsEnabled) {
+        throwPower = 0;
+        return;
+    }
     
     // Check if game is ready
     if (!gameController || !gameController.state) {
@@ -330,7 +363,6 @@ function onMouseUp(event) {
         throwPower = 0;
     }
 }
-
 // Touch controls
 function onTouchStart(event) {
     event.preventDefault();
@@ -358,17 +390,38 @@ function onTouchEnd(event) {
 }
 
 function onKeyDown(event) {
+    // C key - toggle camera controls mode
+    if (event.key === 'c' || event.key === 'C') {
+        if (controls) {
+            cameraControlsEnabled = !cameraControlsEnabled;
+            controls.enabled = cameraControlsEnabled;
+            
+            if (cameraControlsEnabled) {
+                uiManager.showStatus('📷 3D Camera Mode: Use mouse to rotate/zoom camera. Press C to disable.');
+                console.log('[MAIN] Camera controls ENABLED - Drag to rotate, scroll to zoom');
+            } else {
+                uiManager.showStatus('🎮 Game Mode: Mouse controls ball aim and power. Press C for 3D camera.');
+                console.log('[MAIN] Camera controls DISABLED - Back to game controls');
+            }
+        }
+    }
+    
     // R key - reset camera
     if (event.key === 'r' || event.key === 'R') {
         camera.position.set(0, 3, 11); // Adjusted for shorter lane
         camera.lookAt(0, 0, 0);
+        if (controls) {
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+        uiManager.showStatus('📷 Camera reset to default position');
     }
     
     // Space - quick throw (for testing)
     if (event.key === ' ') {
         event.preventDefault();
         const state = gameController.getGameState();
-        if (state.canThrow) {
+        if (state.canThrow && !cameraControlsEnabled) {
             gameController.throwBall({ x: 0, z: -1 }, 0.7);
         }
     }
@@ -397,6 +450,11 @@ function animate() {
     // Calculate deltaTime for smooth physics
     const deltaTime = clock ? clock.getDelta() : 1/60;
     
+    // Update OrbitControls if enabled
+    if (controls && cameraControlsEnabled) {
+        controls.update();
+    }
+    
     // ALWAYS render the scene, even before game starts
     // This ensures preview scene is visible
     if (gameController) {
@@ -411,8 +469,8 @@ function animate() {
             // Wait for frame reset
         }
         
-        // Camera follows ball when in motion with smooth interpolation
-        if (gameController.state.ballInMotion && gameController.ballBody) {
+        // Camera follows ball when in motion with smooth interpolation (only if orbit controls disabled)
+        if (!cameraControlsEnabled && gameController.state.ballInMotion && gameController.ballBody) {
             const ballPos = gameController.ballBody.position;
             const targetX = ballPos.x * 0.3;
             const targetZ = Math.max(11, ballPos.z + 4); // Adjusted for shorter lane
