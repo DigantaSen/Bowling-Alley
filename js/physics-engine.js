@@ -193,14 +193,24 @@ class PhysicsEngine {
     }
 
     isPinKnockedDown(pinBody) {
-        // Check if pin has tipped over (angle > 45 degrees)
+        // Check if pin has tipped over
+        // Since we fixed pins to stand upright (body quaternion at identity, shape rotated),
+        // we need to check if the body itself has rotated significantly from upright
+        
         const quaternion = pinBody.quaternion;
         const euler = new CANNON.Vec3();
         quaternion.toEuler(euler);
         
-        // Check if pin is significantly tilted
-        const tiltAngle = Math.abs(euler.x - Math.PI / 2);
-        return tiltAngle > Math.PI / 4 || pinBody.position.y < 0.1;
+        // For an upright pin (standing), euler angles should be close to (0, 0, 0)
+        // Check if pin is tilted more than 45 degrees from vertical on X or Z axis
+        const tiltX = Math.abs(euler.x);
+        const tiltZ = Math.abs(euler.z);
+        const maxTilt = Math.PI / 4; // 45 degrees
+        
+        // Pin is knocked down if:
+        // 1. Tilted more than 45 degrees on either axis, OR
+        // 2. Fallen through the floor (y < 0.1)
+        return tiltX > maxTilt || tiltZ > maxTilt || pinBody.position.y < 0.1;
     }
 
     isBallStopped(ballBody) {
