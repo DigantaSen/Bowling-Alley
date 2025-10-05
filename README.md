@@ -1,5 +1,17 @@
 # 🎳 Bowling Alley Game
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success?style=for-the-badge&logo=github)](https://digantasen.github.io/Bowling-Alley/)
+[![Three.js](https://img.shields.io/badge/Three.js-v0.150.1-black?style=for-the-badge&logo=three.js)](https://threejs.org/)
+[![Cannon.js](https://img.shields.io/badge/Cannon.js-v0.20.0-orange?style=for-the-badge)](https://github.com/pmndrs/cannon-es)
+
+**Student ID:** 2025201050  
+**Assignment:** Q7 - Bowling Alley Game Implementation  
+**Course:** CS6.302 – Software System Development (Monsoon 2025)
+
+**🎮 [Play Live Demo →](https://digantasen.github.io/Bowling-Alley/)**
+
+---
+
 A fully-featured 3D bowling game built with Three.js and Cannon.js physics engine, implementing official SOOK (Special Olympics Oklahoma) bowling rules.
 
 ## 🎮 Game Features
@@ -138,8 +150,27 @@ Q7_2/
 
 ## 🚀 Running the Game
 
-### Local Development
-1. Clone or download the project
+### Option 1: Play Online (Recommended)
+**🌐 Live Demo:** [https://digantasen.github.io/Bowling-Alley/](https://digantasen.github.io/Bowling-Alley/)
+
+Simply click the link above to play instantly in your browser - no installation required!
+
+### Option 2: Local Development
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/DigantaSen/Bowling-Alley.git
+   cd Bowling-Alley
+   ```
+2. Start a local server:
+   ```bash
+   python3 -m http.server 8080
+   # OR
+   npx http-server -p 8080
+   ```
+3. Open browser: `http://localhost:8080`
+
+### Option 3: Direct File Access
+1. Download or clone the project
 2. Open `index.html` in a modern web browser
 3. No build process required - runs directly in browser!
 
@@ -233,7 +264,18 @@ This project is created for educational purposes as part of coursework assignmen
 **Student ID**: 2025201050  
 **Assignment**: Q7 - Bowling Alley Game Implementation  
 **Framework**: Three.js  
-**Physics**: Cannon.js
+**Physics**: Cannon.js  
+**GitHub**: [DigantaSen](https://github.com/DigantaSen)  
+**Repository**: [Bowling-Alley](https://github.com/DigantaSen/Bowling-Alley)
+
+---
+
+## 🔗 Quick Links
+
+- **🎮 Live Demo:** https://digantasen.github.io/Bowling-Alley/
+- **📦 GitHub Repository:** https://github.com/DigantaSen/Bowling-Alley
+- **📚 Course:** CS6.302 - Software System Development
+- **🏫 Institution:** IIIT Hyderabad
 
 ---
 
