@@ -230,6 +230,6 @@ class PhysicsEngine {
         const angularVelocity = pinBody.angularVelocity.length();
         
         // Pin considered moving only if moving significantly - higher thresholds for speed
-        return velocity > 0.25 || angularVelocity > 0.8;
+        return velocity > 0.01 || angularVelocity > 0.8;
     }
 }
