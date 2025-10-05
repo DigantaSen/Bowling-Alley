@@ -301,9 +301,9 @@ class GameController {
 
         return {
             pinsKnockedDown,
-            isFrameComplete: currentFrame.isComplete,
-            isStrike: currentFrame.isStrike,
-            isSpare: currentFrame.isSpare
+            isFrameComplete: frameJustThrown.isComplete,
+            isStrike: frameJustThrown.isStrike,
+            isSpare: frameJustThrown.isSpare
         };
     }
 
