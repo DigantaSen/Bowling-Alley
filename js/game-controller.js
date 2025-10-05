@@ -141,15 +141,27 @@ class GameController {
             
             const timeSinceThrow = Date.now() - this.throwStartTime;
             
-            // Check if ball has fallen into the pit (past pins and below lane level)
-            if (this.ballBody && (this.ballBody.position.z < -11 || this.ballBody.position.y < -1)) {
-                console.log('[CONTROLLER] Ball fell into pit, removing and scoring...');
+            // Check if ball has exited the pitch (fell into pit, gutter, or past boundaries)
+            const ballExited = this.ballBody && (
+                this.ballBody.position.z < -11 ||     // Past the pins (into back pit)
+                this.ballBody.position.y < -1 ||       // Fell below lane level
+                Math.abs(this.ballBody.position.x) > 1.5 || // Into the gutters (left/right)
+                this.ballBody.position.z > 12          // Rolled backwards off the approach
+            );
+            
+            if (ballExited) {
+                console.log('[CONTROLLER] Ball exited pitch at position:', {
+                    x: this.ballBody.position.x.toFixed(2),
+                    y: this.ballBody.position.y.toFixed(2),
+                    z: this.ballBody.position.z.toFixed(2)
+                });
+                
                 if (!this.state.waitingForReset) {
                     // Stop the ball's physics immediately
                     this.ballBody.velocity.set(0, 0, 0);
                     this.ballBody.angularVelocity.set(0, 0, 0);
                     
-                    // Hide the ball visually (it fell into the pit)
+                    // Hide the ball visually (it exited the pitch)
                     if (this.gameObjects.objects.ball) {
                         this.gameObjects.objects.ball.visible = false;
                     }
@@ -172,12 +184,16 @@ class GameController {
                 return;
             }
             
-            // Check if ball has stopped
+            // Check if ball has stopped (on the lane or elsewhere)
             if (this.ballBody && this.physics.isBallStopped(this.ballBody)) {
                 // Record when ball first stopped
                 if (this.ballStoppedTime === 0) {
                     this.ballStoppedTime = Date.now();
-                    console.log('[CONTROLLER] Ball stopped, waiting for pins to settle...');
+                    console.log('[CONTROLLER] Ball stopped at position:', {
+                        x: this.ballBody.position.x.toFixed(2),
+                        y: this.ballBody.position.y.toFixed(2),
+                        z: this.ballBody.position.z.toFixed(2)
+                    }, 'Waiting for pins to settle...');
                 }
                 
                 // Wait for settle time AFTER ball stops
@@ -186,14 +202,19 @@ class GameController {
                     // Additional check: Make sure most pins have also settled
                     const pinsStillMoving = this.checkPinsStillMoving();
                     if (!pinsStillMoving) {
+                        console.log('[CONTROLLER] Ball stopped and pins settled, completing throw...');
                         this.handleThrowComplete();
                     } else {
                         // Pins still moving, wait a bit more
-                        console.log('[CONTROLLER] Waiting for pins to settle...');
+                        console.log('[CONTROLLER] Ball stopped but pins still settling...');
                     }
                 }
             } else {
                 // Ball is still moving, reset stopped timer
+                if (this.ballStoppedTime !== 0) {
+                    // Log when ball starts moving again (useful for debugging bounces)
+                    console.log('[CONTROLLER] Ball started moving again');
+                }
                 this.ballStoppedTime = 0;
             }
             

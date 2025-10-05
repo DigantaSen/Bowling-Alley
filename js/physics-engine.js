@@ -200,9 +200,14 @@ class PhysicsEngine {
     }
 
     isBallStopped(ballBody) {
-        // Check if ball has stopped moving
-        const velocity = ballBody.velocity.length();
-        return velocity < 0.01;
+        // Check if ball has stopped moving (both linear and angular velocity)
+        const linearVelocity = ballBody.velocity.length();
+        const angularVelocity = ballBody.angularVelocity.length();
+        
+        // Ball is considered stopped if both velocities are very low
+        const stopped = linearVelocity < 0.02 && angularVelocity < 0.1;
+        
+        return stopped;
     }
 
     isPinMoving(pinBody) {
