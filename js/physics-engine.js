@@ -119,6 +119,7 @@ class PhysicsEngine {
         const pinHeight = 0.38; // 38cm tall
         const pinRadius = 0.06; // 6cm radius at widest point
         
+        // Create cylinder shape - cylinders in Cannon.js are along Y axis by default (vertical)
         const pinShape = new CANNON.Cylinder(pinRadius * 0.5, pinRadius, pinHeight, 8);
         const pinBody = new CANNON.Body({
             mass: 1.5, // 1.5kg pin
@@ -127,13 +128,14 @@ class PhysicsEngine {
             angularDamping: 0.5
         });
         
-        pinBody.addShape(pinShape);
+        // Add shape with quaternion to align with Three.js cylinder orientation
+        const shapeQuaternion = new CANNON.Quaternion();
+        shapeQuaternion.setFromEuler(Math.PI / 2, 0, 0); // Rotate shape to match Three.js
+        pinBody.addShape(pinShape, new CANNON.Vec3(0, 0, 0), shapeQuaternion);
+        
         pinBody.position.set(position.x, position.y, position.z);
         
-        // Rotate to stand upright
-        const quaternion = new CANNON.Quaternion();
-        quaternion.setFromEuler(Math.PI / 2, 0, 0);
-        pinBody.quaternion.copy(quaternion);
+        // Pin body orientation is already upright (no rotation needed on body itself)
         
         this.world.addBody(pinBody);
         this.bodies.push(pinBody);
