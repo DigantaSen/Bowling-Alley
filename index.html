@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional 3D Bowling Game with Three.js - SOOK Rules Implementation">
+    <meta name="author" content="Student ID: 2025201050">
+    <title>🎳 Bowling Alley - Professional 3D Game</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Game Info Panel -->
+        <div id="info-panel">
+            <h1>🎳 Bowling Alley</h1>
+            <div id="game-mode-selector">
+                <label>Game Mode:</label>
+                <select id="mode-select">
+                    <option value="singles">Traditional Singles</option>
+                    <option value="doubles">Unified Doubles</option>
+                    <option value="team">Unified Team (4 Players)</option>
+                </select>
+                <button id="start-game-btn">Start Game</button>
+            </div>
+            
+            <div id="player-info">
+                <div class="info-row">
+                    <span>Current Player:</span>
+                    <span id="current-player">Player 1</span>
+                </div>
+                <div class="info-row">
+                    <span>Game:</span>
+                    <span id="current-game">1 of 3</span>
+                </div>
+                <div class="info-row">
+                    <span>Frame:</span>
+                    <span id="current-frame">1</span>
+                </div>
+                <div class="info-row">
+                    <span>Ball:</span>
+                    <span id="current-ball">1</span>
+                </div>
+            </div>
+
+            <!-- Controls Info -->
+            <div id="controls-info">
+                <h3>Controls</h3>
+                <p><strong>Mouse:</strong> Aim the ball</p>
+                <p><strong>Click & Hold:</strong> Set power</p>
+                <p><strong>Release:</strong> Throw ball</p>
+                <p><strong>R:</strong> Reset camera</p>
+            </div>
+
+            <!-- Power Meter -->
+            <div id="power-meter-container">
+                <label>Power:</label>
+                <div id="power-meter">
+                    <div id="power-fill"></div>
+                </div>
+                <span id="power-value">0%</span>
+            </div>
+
+            <!-- Instructions -->
+            <div id="instructions">
+                <button id="toggle-rules-btn">Show Rules</button>
+            </div>
+        </div>
+
+        <!-- 3D Canvas -->
+        <div id="canvas-container">
+            <canvas id="bowling-canvas"></canvas>
+            <div id="throw-controls">
+                <div id="aim-indicator"></div>
+                <div id="status-message">Loading game...</div>
+            </div>
+        </div>
+
+        <!-- Scorecard Panel -->
+        <div id="scorecard-panel">
+            <h2>Scorecard</h2>
+            <div id="scorecard-container"></div>
+            <div id="game-summary">
+                <h3>Game Summary</h3>
+                <div id="summary-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Bowling Rules (SOOK)</h2>
+            
+            <h3>Basic Rules</h3>
+            <ul>
+                <li>Goal: Knock down all ten pins</li>
+                <li>Each frame: Two balls to knock down all pins</li>
+                <li><strong>Strike:</strong> All pins knocked down with first ball (marked as X)</li>
+                <li><strong>Spare:</strong> All pins knocked down with second ball (marked as /)</li>
+                <li>Game consists of 10 frames</li>
+                <li>10th frame special: Strike = 2 bonus balls, Spare = 1 bonus ball</li>
+            </ul>
+
+            <h3>Scoring</h3>
+            <ul>
+                <li>Score = Total pins knocked down</li>
+                <li><strong>Strike:</strong> 10 + next 2 balls</li>
+                <li><strong>Spare:</strong> 10 + next 1 ball</li>
+                <li><strong>Open Frame:</strong> Just the pins knocked down</li>
+                <li>Maximum score per game: 300 (12 strikes)</li>
+            </ul>
+
+            <h3>Game Modes</h3>
+            <ul>
+                <li><strong>Singles:</strong> 1 athlete, 3-game average (max 300)</li>
+                <li><strong>Unified Doubles:</strong> 2 players (athlete + partner), combined 3-game average (max 600)</li>
+                <li><strong>Unified Team:</strong> 4 players (2 athletes + 2 partners), combined 3-game average (max 1200)</li>
+            </ul>
+
+            <h3>Lane Etiquette</h3>
+            <ul>
+                <li>Bowl on your own lane</li>
+                <li>Don't bowl when someone next to you is bowling</li>
+                <li>Wear appropriate bowling shoes</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Three.js and Cannon.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cannon@0.6.2/build/cannon.min.js"></script>
+    
+    <!-- Game Scripts -->
+    <script src="js/physics-engine.js"></script>
+    <script src="js/game-objects.js"></script>
+    <script src="js/scoring-system.js"></script>
+    <script src="js/game-controller.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
