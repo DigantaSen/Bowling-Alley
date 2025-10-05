@@ -218,13 +218,10 @@ class GameController {
                 this.ballStoppedTime = 0;
             }
             
-            // Safety timeout - force complete after 10 seconds from throw
-            if (timeSinceThrow > 10000) {
-                console.log('[CONTROLLER] Timeout - forcing throw complete');
-                if (!this.state.waitingForReset) {
-                    this.handleThrowComplete();
-                }
-            }
+            // No timeout - game waits indefinitely for ball to stop or exit pitch
+            // Ball must either:
+            // 1. Exit the pitch boundaries (back, sides, down, or front)
+            // 2. Come to a complete stop (velocity + angular velocity checks)
         }
     }
 
