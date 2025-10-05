@@ -54,7 +54,9 @@
                 <p><strong>Mouse:</strong> Aim the ball</p>
                 <p><strong>Click & Hold:</strong> Set power</p>
                 <p><strong>Release:</strong> Throw ball</p>
-                <p><strong>R:</strong> Reset camera</p>
+                <p><strong>C:</strong> Toggle 3D Camera Mode</p>
+                <p><strong>R:</strong> Reset camera view</p>
+                <p><strong>Space:</strong> Quick throw (80%)</p>
             </div>
 
             <!-- Power Meter -->
@@ -75,6 +77,10 @@
         <!-- 3D Canvas -->
         <div id="canvas-container">
             <canvas id="bowling-canvas"></canvas>
+            <div id="camera-mode-indicator" style="display: none;">
+                <div class="camera-badge">📷 3D CAMERA MODE</div>
+                <div class="camera-hint">Drag to rotate • Scroll to zoom • Press C to exit</div>
+            </div>
             <div id="throw-controls">
                 <div id="aim-indicator"></div>
                 <div id="status-message">Loading game...</div>

@@ -60,7 +60,12 @@ class UIManager {
         
         this.updateScorecard();
         this.updateGameInfo();
-        this.showStatus('Game started! Aim and throw the ball!');
+        this.showStatus('🎮 Game started! Use mouse to aim & throw. Press C for 3D camera view!');
+        
+        // Show a helpful tip after 3 seconds
+        setTimeout(() => {
+            this.showStatus('💡 Tip: Press C to explore the bowling alley in 3D camera mode!');
+        }, 3000);
     }
 
     updateGameInfo() {

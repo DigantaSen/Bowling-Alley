@@ -73,7 +73,7 @@ function init() {
         animate();
         
         // Show initial message
-        uiManager.showStatus('Select game mode and click "Start Game" to begin!');
+        uiManager.showStatus('🎳 Welcome! Select game mode and Start. Press C for 3D camera anytime!');
         
         console.log('[MAIN] Game initialized successfully!');
         
@@ -396,13 +396,25 @@ function onKeyDown(event) {
             cameraControlsEnabled = !cameraControlsEnabled;
             controls.enabled = cameraControlsEnabled;
             
+            const cameraIndicator = document.getElementById('camera-mode-indicator');
+            
             if (cameraControlsEnabled) {
-                uiManager.showStatus('📷 3D Camera Mode: Use mouse to rotate/zoom camera. Press C to disable.');
+                // Show camera mode indicator
+                if (cameraIndicator) {
+                    cameraIndicator.style.display = 'block';
+                }
+                uiManager.showStatus('📷 3D Camera Mode Active - Drag to rotate, Scroll to zoom');
                 console.log('[MAIN] Camera controls ENABLED - Drag to rotate, scroll to zoom');
             } else {
-                uiManager.showStatus('🎮 Game Mode: Mouse controls ball aim and power. Press C for 3D camera.');
+                // Hide camera mode indicator
+                if (cameraIndicator) {
+                    cameraIndicator.style.display = 'none';
+                }
+                uiManager.showStatus('🎮 Game Mode Active - Ready to bowl!');
                 console.log('[MAIN] Camera controls DISABLED - Back to game controls');
             }
+        } else {
+            uiManager.showStatus('❌ OrbitControls not loaded. Please refresh the page.');
         }
     }
     
@@ -423,6 +435,9 @@ function onKeyDown(event) {
         const state = gameController.getGameState();
         if (state.canThrow && !cameraControlsEnabled) {
             gameController.throwBall({ x: 0, z: -1 }, 0.7);
+            uiManager.showStatus('⚡ Quick throw! 70% power straight down the lane');
+        } else if (cameraControlsEnabled) {
+            uiManager.showStatus('❌ Disable camera mode first (Press C)');
         }
     }
 }
