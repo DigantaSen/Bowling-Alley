@@ -1,4 +1,3 @@
-// Physics Engine using Cannon.js
 console.log('[PHYSICS] Loading physics-engine.js...');
 
 class PhysicsEngine {
@@ -66,7 +65,6 @@ class PhysicsEngine {
     }
 
     createLane() {
-        // Create bowling lane floor - shortened for better gameplay
         const laneShape = new CANNON.Box(new CANNON.Vec3(1, 0.1, 12));
         const laneBody = new CANNON.Body({
             mass: 0, // Static body
@@ -115,11 +113,9 @@ class PhysicsEngine {
     }
 
     createPin(position) {
-        // Bowling pin shape (approximated as cylinder + sphere on top)
         const pinHeight = 0.38; // 38cm tall
         const pinRadius = 0.06; // 6cm radius at widest point
         
-        // Create cylinder shape - cylinders in Cannon.js are along Y axis by default (vertical)
         const pinShape = new CANNON.Cylinder(pinRadius * 0.5, pinRadius, pinHeight, 8);
         const pinBody = new CANNON.Body({
             mass: 1.5, // 1.5kg pin
@@ -128,14 +124,12 @@ class PhysicsEngine {
             angularDamping: 0.5
         });
         
-        // Add shape with quaternion to align with Three.js cylinder orientation
         const shapeQuaternion = new CANNON.Quaternion();
         shapeQuaternion.setFromEuler(Math.PI / 2, 0, 0); // Rotate shape to match Three.js
         pinBody.addShape(pinShape, new CANNON.Vec3(0, 0, 0), shapeQuaternion);
         
         pinBody.position.set(position.x, position.y, position.z);
         
-        // Pin body orientation is already upright (no rotation needed on body itself)
         
         this.world.addBody(pinBody);
         this.bodies.push(pinBody);
@@ -143,7 +137,7 @@ class PhysicsEngine {
     }
 
     throwBall(ballBody, direction, power) {
-        // Apply force to throw the ball - increased from 50 to 80 for more satisfying throws
+
         const baseForce = 80;
         const force = new CANNON.Vec3(
             direction.x * power * baseForce,
@@ -193,32 +187,21 @@ class PhysicsEngine {
     }
 
     isPinKnockedDown(pinBody) {
-        // Check if pin has tipped over
-        // Since we fixed pins to stand upright (body quaternion at identity, shape rotated),
-        // we need to check if the body itself has rotated significantly from upright
         
         const quaternion = pinBody.quaternion;
         const euler = new CANNON.Vec3();
         quaternion.toEuler(euler);
-        
-        // For an upright pin (standing), euler angles should be close to (0, 0, 0)
-        // Check if pin is tilted more than 45 degrees from vertical on X or Z axis
+
         const tiltX = Math.abs(euler.x);
         const tiltZ = Math.abs(euler.z);
         const maxTilt = Math.PI / 4; // 45 degrees
         
-        // Pin is knocked down if:
-        // 1. Tilted more than 45 degrees on either axis, OR
-        // 2. Fallen through the floor (y < 0.1)
         return tiltX > maxTilt || tiltZ > maxTilt || pinBody.position.y < 0.1;
     }
 
     isBallStopped(ballBody) {
         // Check if ball has stopped moving
         const velocity = ballBody.velocity.length();
-        
-        // Ball is considered stopped only when nearly motionless
-        // Very strict threshold to ensure ball has completely stopped
         return velocity < 0.01;
     }
 
@@ -229,7 +212,7 @@ class PhysicsEngine {
         const velocity = pinBody.velocity.length();
         const angularVelocity = pinBody.angularVelocity.length();
         
-        // Pin considered moving only if moving significantly - higher thresholds for speed
+
         return velocity > 0.01 || angularVelocity > 0.8;
     }
 }
